@@ -74,3 +74,10 @@ logo_solar:
     db '      S O   O  L      A   A   R  R   O   O     S ', 0x0D, 0x0A
     db '  SSS   OOO   LLLLL  A   A   R   R   OOO   SSS   ', 0x0D, 0x0A
     db 0x0D, 0x0A, 'SolarOS v1.0 (C) 2026', 0x0D, 0x0A, 0x0D, 0x0A, 0
+
+; обработчик ошибок
+error_handler:
+    call print          ; si уже содержит сообщение об ошибке
+    mov ah, 0
+    int 0x16            ; ждём нажатие клавиши
+    jmp 0xFFFF:0        ; reboot
