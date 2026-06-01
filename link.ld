@@ -4,18 +4,22 @@ SECTIONS {
     . = 0x2000;
 
     .text : {
-        *(.text*);
+        *(.text);
     }
 
     .rodata : {
-        *(.rodata*);
+        *(.rodata);
     }
 
     .data : {
-        *(.data*);
+        *(.data);
     }
 
     .bss : {
-        *(.bss*);
+        *(.bss);
+    }
+
+    .stack : {
+        *(.stack);
     }
 }
