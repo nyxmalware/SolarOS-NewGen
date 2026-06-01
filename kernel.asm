@@ -42,6 +42,15 @@ main_loop:
 %include "disk/disk_params.asm"
 %include "disk/fat12.asm"
 
+setup_mouse_int:
+    pusha
+    cli
+    mov word [0x2C], mouse_handler
+    mov word [0x2E], 0x0000
+    sti
+    popa
+    ret
+
 setup_keyboard_int:
     pusha
     cli
