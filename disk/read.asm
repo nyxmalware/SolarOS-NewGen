@@ -3,7 +3,11 @@
 disk_read:
     push bp
     mov bp, sp
-    push bx cx dx di ax
+    push bx
+    push cx
+    push dx
+    push di
+    push ax
 
     push cx
     call .lba_to_chs
@@ -23,12 +27,17 @@ disk_read:
     jmp read_error
 .done:
     popa
-    pop ax di dx cx bx
+    pop ax
+    pop di
+    pop dx
+    pop cx
+    pop bx
     pop bp
     ret 4
 
 .lba_to_chs:
-    push dx ax
+    push dx
+    push ax
     xor dx, dx
     div word [bp+6]
     inc dx
