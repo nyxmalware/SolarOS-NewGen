@@ -1,14 +1,16 @@
 [package]
-name = "solaros_gui"
+name = "solaros_rust"
 version = "2.0.0"
 edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+name = "solaros_rust"
 
 [dependencies]
 spin = "0.9.8"
 
-[profile.dev]
-panic = "abort"
-
 [profile.release]
 panic = "abort"
 lto = true
+opt-level = "z"
