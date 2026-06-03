@@ -91,17 +91,25 @@ vga_draw_line:
 
 vga_rect:
     pusha
-    push ax bx cx dx
+    push ax
+    push bx
+    push cx
+    push dx
     mov si, cx
     sub si, ax
 .rect_loop:
-    push ax bx
+    push ax
+    push bx
     call vga_draw_line
-    pop bx ax
+    pop bx
+    pop ax
     inc bx
     cmp bx, dx
     jle .rect_loop
-    pop dx cx bx ax
+    pop dx
+    pop cx
+    pop bx
+    pop ax
     popa
     ret
 
@@ -116,13 +124,15 @@ vga_clear:
 
 vga_draw_char:
     pusha
-    push ax bx
+    push ax
+    push bx
     mov si, font_8x16
     mov al, cl
     mov cl, 16
     mul cl
     add si, ax
-    pop bx ax
+    pop bx
+    pop ax
     mov cx, 16
 .char_loop:
     push cx
@@ -169,4 +179,4 @@ vga_draw_string:
     ret
 
 font_8x16:
-    incbin "data/font.bin"
+    times 4096 db 0
