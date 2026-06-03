@@ -5,7 +5,7 @@ use core::panic::PanicInfo;
 
 #[no_mangle]
 pub extern "C" fn rust_init() {
-    // инициализация rust рантайма
+    // инициализация rust
 }
 
 #[no_mangle]
@@ -31,27 +31,6 @@ pub extern "C" fn rust_strcmp(s1: *const u8, s2: *const u8) -> i32 {
         }
         (*s1.add(i) as i32) - (*s2.add(i) as i32)
     }
-}
-
-#[no_mangle]
-pub extern "C" fn rust_calc(a: i32, b: i32, op: u8) -> i32 {
-    match op {
-        b'+' => a + b,
-        b'-' => a - b,
-        b'*' => a * b,
-        b'/' => if b != 0 { a / b } else { 0 },
-        _ => 0,
-    }
-}
-
-#[no_mangle]
-pub extern "C" fn rust_sqrt(x: i32) -> i32 {
-    if x <= 0 { return 0; }
-    let mut guess = x as f64;
-    for _ in 0..10 {
-        guess = (guess + (x as f64) / guess) * 0.5;
-    }
-    guess as i32
 }
 
 #[panic_handler]
