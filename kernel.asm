@@ -1,6 +1,5 @@
-; SolarOS Kernel v1.5
+; SolarOS Kernel v2.0
 ; 16-бит реальный режим
-; поддержка графического рабочего стола
 
 org 0x0000
 bits 16
@@ -26,6 +25,8 @@ start:
     call setup_keyboard_int
     call mouse_init
     call setup_mouse_int
+    
+    call rust_init
 
     call check_boot_mode
 
@@ -152,6 +153,11 @@ draw_background:
     popa
     ret
 
+; rust extern
+extern rust_init
+extern rust_strlen
+extern rust_strcmp
+
 boot_drive:      db 0
 switch_to_gui:   db 0
 prompt:          db 'SolarOS@User:~$ ', 0
@@ -165,4 +171,4 @@ logo_solar:
     db '   SSS  O   O  L      AAAAA   RRR    O   O   SSS  ', 0x0D, 0x0A
     db '      S O   O  L      A   A   R  R   O   O     S  ', 0x0D, 0x0A
     db '  SSS   OOO   LLLLL  A   A   R   R   OOO   SSS    ', 0x0D, 0x0A
-    db 0x0D, 0x0A, 'SolarOS v1.5 (C) 2026', 0x0D, 0x0A, 0x0D, 0x0A, 0
+    db 0x0D, 0x0A, 'SolarOS v2.0 (C) 2026', 0x0D, 0x0A, 0x0D, 0x0A, 0
