@@ -1,27 +1,33 @@
 NASM = nasm
-NASMFLAGS = -f elf32
+RUSTC = cargo
 LD = ld
-LDFLAGS = -T link.ld -m elf_i386
-QEMU = qemu-system-i386
+QEMU = qemu-system-x86_64
 IMG = solaros.img
 
+ASM_FILES = boot.asm initrix.asm kernel.asm
 ASM_OBJS = boot.o initrix.o kernel.o
 
-all: build run
+all: build_asm build_rust link build_img
 
-build: $(ASM_OBJS)
-	$(LD) $(LDFLAGS) -o kernel.bin $(ASM_OBJS)
-	dd if=/dev/zero of=$(IMG) bs=512 count=2880 status=none
-	dd if=boot.bin of=$(IMG) conv=notrunc status=none
-	dd if=kernel.bin of=$(IMG) seek=2 conv=notrunc status=none
+build_asm:
+	$(NASM) -f elf32 boot.asm -o boot.o
+	$(NASM) -f elf32 initrix.asm -o initrix.o
+	$(NASM) -f elf32 kernel.asm -o kernel.o
 
-%.o: %.asm
-	$(NASM) $(NASMFLAGS) $< -o $@
+build_rust:
+	cd rust && $(RUSTC) build --release
+
+link:
+	$(LD) -m elf_i386 -T link.ld -o solaros.bin $(ASM_OBJS) rust/target/release/libsolaros_rust.a
+
+build_img:
+	objcopy -O binary solaros.bin $(IMG)
+
+clean:
+	rm -f *.o *.bin $(IMG)
+	cd rust && $(RUSTC) clean
 
 run:
 	$(QEMU) -fda $(IMG)
 
-clean:
-	rm -f *.o *.bin $(IMG)
-
-.PHONY: all build run clean
+.PHONY: all build_asm build_rust link build_img clean run
