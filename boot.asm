@@ -1,7 +1,3 @@
-; SolarOS Bootloader v1.0
-; 16-bit real mode
-; size 512 bytes
-
 org 0x7C00
 bits 16
 
