@@ -1,4 +1,5 @@
-; SolarOS Kernel v2.0
+; SolarOS Kernel v2.0 - полная исправленная версия
+; 16-бит реальный режим
 
 org 0x0000
 bits 16
@@ -25,32 +26,19 @@ start:
     call mouse_init
     call setup_mouse_int
     
-    ; Проверяем Rust
-    call check_rust_available
-    cmp byte [rust_available], 1
-    jne .no_rust
-    
     call rust_init
-    mov si, msg_rust_ok
-    call print
-    jmp .continue
-    
-.no_rust:
-    mov si, msg_rust_missing
-    call print
 
-.continue:
     call check_boot_mode
 
 main_loop:
-    cmp byte [switch_to_gui], 1
-    je launch_gui
-    
     mov si, prompt
     call print
     call input_line
     call parse_command
     call print_newline
+    
+    cmp byte [switch_to_gui], 1
+    je launch_gui
     
     jmp main_loop
 
@@ -59,12 +47,30 @@ launch_gui:
     call desktop_main
     jmp main_loop
 
-; Подключение модулей (фикс)
-%include "kernel/print.asm"      
+check_boot_mode:
+    pusha
+    mov si, boot_param
+    call strlen
+    cmp ax, 0
+    je .done
+    mov si, boot_param
+    mov di, gui_str
+    call strcmp
+    jnc .set_gui
+    jmp .done
+.set_gui:
+    mov byte [switch_to_gui], 1
+.done:
+    popa
+    ret
+
+; Подключение модулей
+%include "kernel/print.asm"
 %include "kernel/input.asm"
 %include "kernel/commands.asm"
 %include "kernel/idt.asm"
 %include "kernel/keyboard.asm"
+%include "kernel/error.asm"          ; <- ДОБАВЛЕНО!
 
 %include "lib/string.asm"
 %include "lib/math.asm"
@@ -85,60 +91,6 @@ launch_gui:
 %include "apps/cmd.asm"
 %include "apps/calc.asm"
 %include "apps/about.asm"
-
-
-extern rust_init
-extern rust_test
-extern rust_strlen
-extern rust_strcmp
-
-boot_drive:      db 0
-switch_to_gui:   db 0
-rust_available:  db 0
-prompt:          db 'SolarOS@User:~$ ', 0
-boot_param:      times 64 db 0
-gui_str:         db 'gui', 0
-
-logo_solar:    
-    db 0x0D, 0x0A
-    db '   SSS   OOO   L       AAA    RRR    OOO   SSS   ', 0x0D, 0x0A
-    db '  S     O   O  L      A   A   R   R  O   O  S     ', 0x0D, 0x0A
-    db '   SSS  O   O  L      AAAAA   RRR    O   O   SSS  ', 0x0D, 0x0A
-    db '      S O   O  L      A   A   R  R   O   O     S  ', 0x0D, 0x0A
-    db '  SSS   OOO   LLLLL  A   A   R   R   OOO   SSS    ', 0x0D, 0x0A
-    db 0x0D, 0x0A, 'SolarOS v2.0 (C) 2026', 0x0D, 0x0A, 0x0D, 0x0A, 0
-
-msg_rust_ok:     db '[OK] Rust backend initialized', 0x0D, 0x0A, 0
-msg_rust_missing: db '[WARN] Rust backend not available', 0x0D, 0x0A, 0
-
-check_rust_available:
-    pusha
-    mov byte [rust_available], 0
-    mov ax, 0xFFFF
-    call rust_test
-    cmp ax, 0x1234
-    jne .done
-    mov byte [rust_available], 1
-.done:
-    popa
-    ret
-
-check_boot_mode:
-    pusha
-    mov si, boot_param
-    call strlen
-    cmp ax, 0
-    je .done
-    mov si, boot_param
-    mov di, gui_str
-    call strcmp
-    jnc .set_gui
-    jmp .done
-.set_gui:
-    mov byte [switch_to_gui], 1
-.done:
-    popa
-    ret
 
 setup_keyboard_int:
     pusha
@@ -202,3 +154,23 @@ draw_background:
     call rect_fill
     popa
     ret
+
+; rust extern
+extern rust_init
+extern rust_strlen
+extern rust_strcmp
+
+boot_drive:      db 0
+switch_to_gui:   db 0
+prompt:          db 'SolarOS@User:~$ ', 0
+boot_param:      times 64 db 0
+gui_str:         db 'gui', 0
+
+logo_solar:    
+    db 0x0D, 0x0A
+    db '   SSS   OOO   L       AAA    RRR    OOO   SSS   ', 0x0D, 0x0A
+    db '  S     O   O  L      A   A   R   R  O   O  S     ', 0x0D, 0x0A
+    db '   SSS  O   O  L      AAAAA   RRR    O   O   SSS  ', 0x0D, 0x0A
+    db '      S O   O  L      A   A   R  R   O   O     S  ', 0x0D, 0x0A
+    db '  SSS   OOO   LLLLL  A   A   R   R   OOO   SSS    ', 0x0D, 0x0A
+    db 0x0D, 0x0A, 'SolarOS v2.0 (C) 2026', 0x0D, 0x0A, 0x0D, 0x0A, 0
