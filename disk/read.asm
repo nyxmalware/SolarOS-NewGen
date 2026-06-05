@@ -1,4 +1,5 @@
-; SolarOS disk read driver
+; disk/read.asm - исправлен
+extern error_handler
 
 disk_read:
     push bp
@@ -62,6 +63,7 @@ disk_reset:
 
 read_error:
     mov si, err_read
-    jmp error_handler
+    call error_handler
+    ; never returns
 
 err_read: db '[!] Disk read error', 0x0D, 0x0A, 0
