@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/arch-x86__64-blue?style=flat-square&labelColor=1F2937&color=3AAFA9" alt="arch">
-  <img src="https://img.shields.io/badge/lang-C-00599C?style=flat-square&labelColor=1F2937" alt="lang">
+  <img src="https://img.shields.io/badge/lang-C,ASM-00599C?style=flat-square&labelColor=1F2937" alt="lang">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square&labelColor=1F2937&color=57AB5B" alt="license">
   <img src="https://img.shields.io/badge/status-pre--alpha-yellow?style=flat-square&labelColor=1F2937&color=D4A72C" alt="status">
 </p>
