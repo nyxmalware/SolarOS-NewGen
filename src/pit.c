@@ -1,7 +1,7 @@
 #include "solarios.h"
 static uint64_t tick_count=0;
 void pit_init(uint32_t freq){
-uint16_t divisor=1193180/freq;
+uint16_t divisor=1193182/freq;
 if(divisor<1)divisor=1;
 if(divisor>65535)divisor=65535;
 outb(0x43,0x36);
