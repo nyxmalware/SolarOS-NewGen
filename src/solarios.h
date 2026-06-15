@@ -45,6 +45,7 @@ int dragging;
 int32_t drag_offx,drag_offy;
 void (*draw_content)(struct window *win);
 void (*on_click)(struct window *win,int32_t mx,int32_t my);
+void (*on_key)(struct window *win,char ch);
 struct window *next;
 } window_t;
 void gui_init(void);
