@@ -1,7 +1,7 @@
 <h1 align="center">
   <img src="https://img.shields.io/badge/SolarOS-NewGen-3AAFA9?style=for-the-badge&labelColor=1F2937" alt="SolarOS NewGen">
   <br>
-   64-bit Operating System with GUI
+   64-bit Operating System with GUI (Больше не поддерживается)
 </h1>
 
 <p align="center">
@@ -77,3 +77,5 @@ sudo apt install nasm gcc qemu-system-x86 make
 
 # Arch
 sudo pacman -S nasm gcc qemu-desktop make
+
+(Ос не поддерживается разработчиком)
